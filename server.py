@@ -1,3 +1,8 @@
+"""
+This module acts as a Flask server for the project
+
+"""
+
 import os
 from flask import Flask, request
 import database_helper
@@ -8,13 +13,20 @@ app = Flask(__name__, static_url_path='')
 
 @app.route("/")
 def index():
+    """
+    Send the initial html to the client.
+    """
     return app.send_static_file('client.html')
 
 
 @app.route('/show_matches', methods=['POST'])
 def show_matches():
-    sorting = request.form['sorting']
+    """
+    This route sends the top 20 matches that have been parsed to the client.
 
+    Sorting can be either win_rate or wins.
+    """
+    sorting = request.form['sorting']
     matches = None
 
     if sorting == 'win_rate':
@@ -23,9 +35,14 @@ def show_matches():
     elif sorting == 'wins':
         matches = database_helper.get_most_wins()
 
+    # used for counting the number of matches currently parsed.
     matches_parsed = database_helper.get_matches_parsed().pop('matches_parsed')
+
     if matches:
         data = []
+
+        # we need to pop the id column that Mongo db adds
+        # matches are stored as dictionaries in the data array
         for m in matches:
             m.pop('_id')
             dict(m)
