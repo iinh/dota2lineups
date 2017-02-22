@@ -48,7 +48,7 @@ def show_matches():
             dict(m)
             data.append(m)
 
-        return json.dumps({'success:': True,
+        return json.dumps({'success:': False,
                            "message": "Match data retrieved successfully",
                            "data": data, "matches_parsed": matches_parsed})
     else:

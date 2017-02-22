@@ -28,71 +28,83 @@ function fillMatches(sorting){
         if (this.readyState == 4 && this.status == 200) {
             res = JSON.parse(this.responseText);
 
-            for (var i = 0; i < matchesShown; i++){
-                console.log(res.data[i])
-                contentField = document.createElement("div");
-                contentField.className = "content_field";
+            if res.success{
+                for (var i = 0; i < matchesShown; i++){
+                    contentField = document.createElement("div");
+                    contentField.className = "content_field";
 
-                // add list index (1 to 20)
-                var id = (i+1).toString() + '.';
-                number = document.createElement("div");
-                number.className = "number";
-                p_number = document.createElement("p");
-                p_number.textContent = id;
-                p_number.className = "small_text";
-                number.appendChild(p_number);
+                    // add list index (1 to 20)
+                    var id = (i+1).toString() + '.';
+                    number = document.createElement("div");
+                    number.className = "number";
+                    p_number = document.createElement("p");
+                    p_number.textContent = id;
+                    p_number.className = "small_text";
+                    number.appendChild(p_number);
 
-                // add lineup string
-                lineupstring = convertLineUp(res.data[i].lineup);
-                lineup = document.createElement("div");
-                lineup.className = "lineup";
-                p_lineup = document.createElement("p");
-                p_lineup.textContent = lineupstring;
-                p_lineup.className = "small_text";
-                lineup.append(p_lineup);
+                    // add lineup string
+                    lineupstring = convertLineUp(res.data[i].lineup);
+                    lineup = document.createElement("div");
+                    lineup.className = "lineup";
+                    p_lineup = document.createElement("p");
+                    p_lineup.textContent = lineupstring;
+                    p_lineup.className = "small_text";
+                    lineup.append(p_lineup);
 
-                // add wins string
-                wins = document.createElement("div");
-                wins.className = "wins";
-                p_wins = document.createElement("p");
-                p_wins.textContent = res.data[i].wins;
-                p_wins.className = "small_text";
-                wins.appendChild(p_wins);
+                    // add wins string
+                    wins = document.createElement("div");
+                    wins.className = "wins";
+                    p_wins = document.createElement("p");
+                    p_wins.textContent = res.data[i].wins;
+                    p_wins.className = "small_text";
+                    wins.appendChild(p_wins);
 
-                // add losses string
-                losses = document.createElement("div");
-                losses.className = "losses";
-                p_losses = document.createElement("p");
-                p_losses.textContent = res.data[i].losses;
-                p_losses.className = "small_text";
-                losses.appendChild(p_losses);
+                    // add losses string
+                    losses = document.createElement("div");
+                    losses.className = "losses";
+                    p_losses = document.createElement("p");
+                    p_losses.textContent = res.data[i].losses;
+                    p_losses.className = "small_text";
+                    losses.appendChild(p_losses);
 
-                // add winrate string
-                winRate = document.createElement("div");
-                winRate.className = "winrate";
-                p_winRate = document.createElement("p");
-                p_winRate.textContent = res.data[i].win_rate;
-                p_winRate.className = "small_text";
-                winRate.appendChild(p_winRate);
+                    // add winrate string
+                    winRate = document.createElement("div");
+                    winRate.className = "winrate";
+                    p_winRate = document.createElement("p");
+                    p_winRate.textContent = res.data[i].win_rate;
+                    p_winRate.className = "small_text";
+                    winRate.appendChild(p_winRate);
 
-                // put them all in a single match div
-                contentField.appendChild(number);
-                contentField.appendChild(lineup);
-                contentField.appendChild(wins);
-                contentField.appendChild(losses);
-                contentField.appendChild(winRate);
-                document.getElementById("content_matches").appendChild(contentField);
-            }
+                    // put them all in a single match div
+                    contentField.appendChild(number);
+                    contentField.appendChild(lineup);
+                    contentField.appendChild(wins);
+                    contentField.appendChild(losses);
+                    contentField.appendChild(winRate);
+                    document.getElementById("content_matches").appendChild(contentField);
+                }
 
-                // add counter of matches parsed
-                matchesParsed = document.createElement("div");
-                matchesParsed.className = "lineup";
-                p_matchesParsed = document.createElement("p");
-                p_matchesParsed.textContent = res.matches_parsed + ' matches parsed.';
-                p_matchesParsed.className = "small_text";
-                matchesParsed.appendChild(p_matchesParsed);
-                document.getElementById("content_matches").appendChild(matchesParsed);
-
+                    // add counter of matches parsed
+                    matchesParsed = document.createElement("div");
+                    matchesParsed.className = "lineup";
+                    p_matchesParsed = document.createElement("p");
+                    p_matchesParsed.textContent = res.matches_parsed + ' matches parsed.';
+                    p_matchesParsed.className = "small_text";
+                    matchesParsed.appendChild(p_matchesParsed);
+                    document.getElementById("content_matches").appendChild(matchesParsed);
+                }
+                else{
+                    // Hijack the lineup field to show an error message.
+                    contentField = document.createElement("div");
+                    contentField.className = "content_field";
+                    lineup = document.createElement("div");
+                    lineup.className = "lineup";
+                    p_lineup = document.createElement("p");
+                    p_lineup.textContent = res.message;
+                    p_lineup.className = "small_text";
+                    lineup.append(p_lineup);
+                    document.getElementById("content_matches").appendChild(matchesParsed);
+                }
         }
     };
     xhttp.open('POST', url, false);
