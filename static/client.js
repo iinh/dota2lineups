@@ -28,7 +28,7 @@ function fillMatches(sorting){
         if (this.readyState == 4 && this.status == 200) {
             res = JSON.parse(this.responseText);
             console.log(res.success);
-            
+
             if (res.success){
                 for (var i = 0; i < matchesShown; i++){
                     contentField = document.createElement("div");
@@ -104,7 +104,8 @@ function fillMatches(sorting){
                     p_lineup.textContent = res.message;
                     p_lineup.className = "small_text";
                     lineup.append(p_lineup);
-                    document.getElementById("content_matches").appendChild(matchesParsed);
+                    contentField.appendChild(lineup)
+                    document.getElementById("content_matches").appendChild(contentField);
                 }
         }
     };
