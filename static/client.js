@@ -27,8 +27,9 @@ function fillMatches(sorting){
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             res = JSON.parse(this.responseText);
-
-            if res.success{
+            console.log(res.success);
+            
+            if (res.success){
                 for (var i = 0; i < matchesShown; i++){
                     contentField = document.createElement("div");
                     contentField.className = "content_field";
