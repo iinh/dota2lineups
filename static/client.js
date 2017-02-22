@@ -109,7 +109,7 @@ function fillMatches(sorting){
                 }
         }
     };
-    xhttp.open('POST', url, false);
+    xhttp.open('POST', url, true);
     xhttp.send(data);
 }
 
