@@ -27,8 +27,6 @@ function fillMatches(sorting){
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             res = JSON.parse(this.responseText);
-            console.log(res.success);
-            console.log(res);
 
             if (res.success){
                 for (var i = 0; i < matchesShown; i++){
