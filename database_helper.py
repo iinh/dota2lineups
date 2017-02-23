@@ -14,14 +14,30 @@ def get_collection():
     """
     Get a collection from the database and return it
     """
-    uri = os.environ.get('MONGODB_URI')
+    uri = os.environ.get('MONGODB_URI_DO')
 
-    database = os.environ.get('DATABASE_NAME')
-    collection = os.environ.get('DATABASE_COLLECTION')
+    database = os.environ.get('DATABASE_NAME_DO')
+    collection = os.environ.get('DATABASE_COLLECTION_DO')
     client = MongoClient(uri)
     db = client[database]
     collection = db[collection]
     return collection
+
+
+def add_lineup_complete(lineup_key, wins, losses, winning_matches, losing_matches):
+    """
+    Add a new lineup to the database using a with all info parsed.
+    """
+    collection = get_collection()
+
+    cmd = {'winning_matches': winning_matches,
+           'losing_matches': losing_matches,
+           'lineup': lineup_key,
+           'wins': wins,
+           'losses': losses,
+           'win_rate': -1}
+
+    collection.insert(cmd)
 
 
 def add_lineup(match_id, lineup_key, win):
@@ -31,19 +47,30 @@ def add_lineup(match_id, lineup_key, win):
     collection = get_collection()
 
     if win:
-        cmd = {'match_ids': [match_id],
+        cmd = {'winning_matches': [match_id],
                'lineup': lineup_key,
                'wins': 1,
                'losses': 0,
                'win_rate': 1}
     else:
-        cmd = {'match_ids': [match_id],
+        cmd = {'losing_matches': [match_id],
                'lineup': lineup_key,
                'wins': 0,
                'losses': 1,
                'win_rate': 0}
 
     collection.insert(cmd)
+
+
+def remove_lineup(lineup_key):
+    """
+    Remove a lineup from database
+    """
+    collection = get_collection()
+
+    cmd = {'lineup': lineup_key}
+
+    collection.remove(cmd)
 
 
 def lineup_in_db(lineup_key):
@@ -63,7 +90,7 @@ def add_win(match_id, lineup_key):
 
     collection.update({'lineup': lineup_key}, {
                           '$inc': {'wins': 1},
-                          '$addToSet': {'match_ids': match_id}
+                          '$addToSet': {'winning_matches': match_id}
                       })
     update_winrate(lineup_key)
 
@@ -89,7 +116,7 @@ def add_loss(match_id, lineup_key):
 
     collection.update({'lineup': lineup_key}, {
                           '$inc': {'losses': 1},
-                          '$addToSet': {'match_ids': match_id}
+                          '$addToSet': {'losing_matches': match_id}
                       })
     update_winrate(lineup_key)
 
