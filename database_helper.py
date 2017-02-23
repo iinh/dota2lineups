@@ -24,6 +24,7 @@ def get_collection():
     return collection
 
 
+
 def add_lineup_complete(lineup_key, wins, losses, winning_matches, losing_matches):
     """
     Add a new lineup to the database using a with all info parsed.
