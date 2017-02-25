@@ -56,12 +56,12 @@ def show_matches():
                            "message": "Match data could not be retrieved"})
 
 
-@app.route('/lineup/<string:lineup_key>', methods=['GET'])
+@app.route('/lineup/<lineup_key>', methods=['GET'])
 def show_matches_for_lineup(lineup_key):
     """
     Get a dict with match_id and win/loss
     """
-    matches = get_matches_for_lineup(lineup_key)
+    matches = database_helper.get_matches_for_lineup(lineup_key)
     return jsonify(matches)
 
 
