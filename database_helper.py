@@ -176,6 +176,15 @@ def get_matches_parsed():
         return x
 
 
+def get_lineups_parsed():
+    """
+    Get number of lineups in db
+    """
+
+    collection = get_collection()
+    return collection.count()
+
+
 def get_matches_for_lineup(lineup_key):
     """
     Get the match_ids for a specific lineup_key
