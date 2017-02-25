@@ -175,3 +175,11 @@ def get_matches_parsed():
     for x in res:
         return x
 
+
+def get_lineups_parsed():
+    """
+        Get the numbers of lineups parsed in the database.
+    """
+    collection = get_collection()
+    lineups_parsed = collection.count()
+    return lineups_parsed

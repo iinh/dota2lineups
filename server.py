@@ -35,8 +35,8 @@ def show_matches():
     elif sorting == 'wins':
         matches = database_helper.get_most_wins()
 
-    # used for counting the number of matches currently parsed.
-    matches_parsed = database_helper.get_matches_parsed().pop('matches_parsed')
+    # used for counting the number of lineups currently parsed.
+    lineups_parsed = database_helper.get_lineups_parsed()
 
     if matches:
         data = []
@@ -50,7 +50,7 @@ def show_matches():
 
         return json.dumps({'success': True,
                            "message": "Match data retrieved successfully",
-                           "data": data, "matches_parsed": matches_parsed})
+                           "data": data, "lineups_parsed": lineups_parsed})
     else:
         return json.dumps({'success:': False,
                            "message": "Match data could not be retrieved"})

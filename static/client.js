@@ -88,7 +88,7 @@ function fillMatches(sorting){
                     matchesParsed = document.createElement("div");
                     matchesParsed.className = "lineup";
                     p_matchesParsed = document.createElement("p");
-                    p_matchesParsed.textContent = res.matches_parsed + ' matches parsed.';
+                    p_matchesParsed.textContent = res.lineups_parsed + ' lineups parsed.';
                     p_matchesParsed.className = "small_text";
                     matchesParsed.appendChild(p_matchesParsed);
                     document.getElementById("content_matches").appendChild(matchesParsed);
