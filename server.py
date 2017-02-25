@@ -4,7 +4,7 @@ This module acts as a Flask server for the project
 """
 
 import os
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import database_helper
 import json
 
@@ -54,6 +54,16 @@ def show_matches():
     else:
         return json.dumps({'success:': False,
                            "message": "Match data could not be retrieved"})
+
+
+@app.route('/lineup/<int:lineup_key>', methods=['GET'])
+def show_matches_for_lineup(lineup_key):
+    """
+    Get a dict with match_id and win/loss
+    """
+    matches = get_matches_for_lineup(lineup_key)
+    return jsonify(matches)
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

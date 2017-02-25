@@ -176,10 +176,19 @@ def get_matches_parsed():
         return x
 
 
-def get_lineups_parsed():
+def get_matches_for_lineup(lineup_key):
     """
-        Get the numbers of lineups parsed in the database.
+    Get the match_ids for a specific lineup_key
     """
     collection = get_collection()
-    lineups_parsed = collection.count()
-    return lineups_parsed
+    result = collection.find_one({"lineup": lineup_key},
+                                 {"winning_matches": 1, "losing_matches": 1})
+    matches = {}
+    for match in result["winning_matches"]:
+        matches[match] = "win"
+
+    for match in result["losing_matches"]:
+        matches[match] = "loss"
+
+    return matches
+    
