@@ -51,7 +51,7 @@ function fillMatches(sorting){
                     lineup_text = document.createTextNode(lineupstring);
                     a_lineup.appendChild(lineup_text);
                     a_lineup.title = lineupstring;
-                    a_lineup.href = "/lineup/" + lineup;
+                    a_lineup.href = "/lineup/" + res.data[i].lineup;
                     lineup.append(a_lineup);
 
                     // add wins string
