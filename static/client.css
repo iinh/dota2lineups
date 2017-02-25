@@ -100,6 +100,14 @@ body{
     height: 30px;
     float:left;
 }
+.lineup a:link{
+  color: #272623;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 10pt;
+  padding-left: 10px;
+  padding-top: 6px;
+  margin: 0;
+}
 
 .wins, .losses, .winrate{
     width: 115px;
