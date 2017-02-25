@@ -11,7 +11,8 @@ function fillMatches(sorting){
     var losses;
     var winRate;
     var p_number;
-    var p_lineup;
+    var a_lineup;
+    var lineup_text;
     var p_wins;
     var p_losses;
     var p_winRate;
@@ -46,9 +47,11 @@ function fillMatches(sorting){
                     lineupstring = convertLineUp(res.data[i].lineup);
                     lineup = document.createElement("div");
                     lineup.className = "lineup";
-                    p_lineup = document.createElement("p");
-                    p_lineup.textContent = lineupstring;
-                    p_lineup.className = "small_text";
+                    a_lineup = document.createElement("a");
+                    lineup_text = document.createTextNode(lineupstring);
+                    a_lineup.appendChild(lineup_text);
+                    a_lineup.title = lineupstring;
+                    a_lineup.href = "/" + lineup;
                     lineup.append(p_lineup);
 
                     // add wins string
