@@ -13,6 +13,6 @@ create table lineups(
 create table match_ids(
     lineup_key varchar(20) not null,
     match_id integer not null,
-    primary key(lineup_key, match_id)
+    primary key(lineup_key, match_id),
     foreign key(lineup_key) references lineups(lineup_key)
 );
