@@ -30,30 +30,31 @@ def show_matches():
     matches = None
 
     if sorting == 'win_rate':
-        matches = database_helper.get_highest_winrate()
+        matches = database_helper.get_highest_win_rate()
+
+    elif sorting == 'weighted_sort':
+        matches = database_helper.get_highest_weighted_sort()
 
     elif sorting == 'wins':
         matches = database_helper.get_most_wins()
 
     # used for counting the number of lineups currently parsed.
-    lineups_parsed = database_helper.get_lineups_parsed()
-
+    matches_parsed = database_helper.get_matches_parsed()
     if matches:
         data = []
-
-        # we need to pop the id column that Mongo db adds
-        # matches are stored as dictionaries in the data array
         for m in matches:
-            m.pop('_id')
-            dict(m)
-            data.append(m)
-
+            keys = ['lineup_key', 'wins', 'losses', 'win_rate', 'weighted_sort']
+            data.append(dict(zip(keys, m)))
         return json.dumps({'success': True,
                            "message": "Match data retrieved successfully",
-                           "data": data, "lineups_parsed": lineups_parsed})
+                           "data": data,
+                           "matches_parsed": matches_parsed
+                           })
     else:
         return json.dumps({'success:': False,
-                           "message": "Match data could not be retrieved"})
+                           "message": "Match data could not be retrieved",
+                           "data": matches
+                           })
 
 
 @app.route('/lineup/<lineup_key>', methods=['GET'])
@@ -61,7 +62,15 @@ def show_matches_for_lineup(lineup_key):
     """
     Get a dict with match_id and win/loss
     """
-    matches = database_helper.get_matches_for_lineup(lineup_key)
+    matches = {'wins': [], 'losses': []}
+    for m in database_helper.get_matches_by_lineup(lineup_key):
+
+        if m[1]:        # match won
+            matches['wins'].append(m[0])
+
+        else:           # match lost
+            matches['losses'].append(m[0])
+
     return jsonify(matches)
 
 

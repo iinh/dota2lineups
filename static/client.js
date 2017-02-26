@@ -1,8 +1,9 @@
 window.onload = function(){
-    fillMatches('wins'); // Default sorting
+    fillMatches('weighted_sort'); // Default sorting
 };
 
 function fillMatches(sorting){
+    console.log('filling matches with sorting: ' + sorting);
     var matchesShown = 20;
     var contentField;
     var number;
@@ -10,15 +11,17 @@ function fillMatches(sorting){
     var wins;
     var losses;
     var winRate;
+    var score;
+    var matchesParsed;
     var p_number;
-    var a_lineup;
-    var lineup_text;
     var p_wins;
     var p_losses;
     var p_winRate;
-    var lineup;
+    var p_score;
+    var a_lineup;
+    var lineup_text;
     var id;
-    var matchesParsed;
+
     var p_matchesParsed;
 
     var xhttp = new XMLHttpRequest();
@@ -28,8 +31,9 @@ function fillMatches(sorting){
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             res = JSON.parse(this.responseText);
-
+            console.log(res);
             if (res.success){
+                console.log('res is: ' + res);
                 for (var i = 0; i < matchesShown; i++){
                     contentField = document.createElement("div");
                     contentField.className = "content_field";
@@ -44,14 +48,16 @@ function fillMatches(sorting){
                     number.appendChild(p_number);
 
                     // add lineup string
-                    lineupstring = convertLineUp(res.data[i].lineup);
+                    lineupstring = convertLineUp(res.data[i].lineup_key);
                     lineup = document.createElement("div");
                     lineup.className = "lineup";
                     a_lineup = document.createElement("a");
+                    a_lineup.className = "link";
                     lineup_text = document.createTextNode(lineupstring);
+                    lineup_text.className = "link";
                     a_lineup.appendChild(lineup_text);
                     a_lineup.title = lineupstring;
-                    a_lineup.href = "/lineup/" + res.data[i].lineup;
+                    a_lineup.href = "/lineup/" + res.data[i].lineup_key;
                     lineup.append(a_lineup);
 
                     // add wins string
@@ -74,9 +80,17 @@ function fillMatches(sorting){
                     winRate = document.createElement("div");
                     winRate.className = "winrate";
                     p_winRate = document.createElement("p");
-                    p_winRate.textContent = res.data[i].win_rate;
+                    p_winRate.textContent = (res.data[i].win_rate*100).toFixed(2) + ' %'; // Get rate in percentage with 2 decimals
                     p_winRate.className = "small_text";
                     winRate.appendChild(p_winRate);
+
+                     // add score string
+                    score = document.createElement("div");
+                    score.className = "score";
+                    p_score = document.createElement("p");
+                    p_score.textContent = (res.data[i].weighted_sort).toFixed(2); // fix 2 decimals
+                    p_score.className = "small_text";
+                    score.appendChild(p_score);
 
                     // put them all in a single match div
                     contentField.appendChild(number);
@@ -84,6 +98,7 @@ function fillMatches(sorting){
                     contentField.appendChild(wins);
                     contentField.appendChild(losses);
                     contentField.appendChild(winRate);
+                    contentField.appendChild(score);
                     document.getElementById("content_matches").appendChild(contentField);
                 }
 
@@ -91,7 +106,15 @@ function fillMatches(sorting){
                     matchesParsed = document.createElement("div");
                     matchesParsed.className = "lineup";
                     p_matchesParsed = document.createElement("p");
-                    p_matchesParsed.textContent = res.lineups_parsed + ' lineups parsed.';
+                    p_matchesParsed.textContent = res.matches_parsed + ' matches parsed.';
+                    p_matchesParsed.className = "small_text";
+                    matchesParsed.appendChild(p_matchesParsed);
+                    document.getElementById("content_matches").appendChild(matchesParsed);
+
+                    matchesParsed = document.createElement("div");
+                    matchesParsed.className = "lineup";
+                    p_matchesParsed = document.createElement("p");
+                    p_matchesParsed.textContent = 'Score is calculated with the following function: score = win rate * ln(matches played)';
                     p_matchesParsed.className = "small_text";
                     matchesParsed.appendChild(p_matchesParsed);
                     document.getElementById("content_matches").appendChild(matchesParsed);

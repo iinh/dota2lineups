@@ -3,7 +3,7 @@ body{
 }
 
 .wrapper{
-    width: 1100px;
+    width: 1070px;
     height: 900px;
     margin:auto;
     margin-top: 50px;
@@ -17,7 +17,7 @@ body{
 }
 
 .content{
-    width: 1098px;
+    width: 1068px;
     height: 878px;
     float:left;
     background-color: #C5D5D3;
@@ -29,8 +29,8 @@ body{
     clear:both;
     height: 20px;
     background-color: #302b2b;
-    text-align:right;
-    padding-right: 5px;
+    text-align: right;
+
 }
 
 .header_text{
@@ -58,13 +58,7 @@ body{
     margin: 0;
 }
 
-.footer_text{
-    color: #56bba7;
-    font-family: verdana;
-    font-size: 8pt;
-    padding-right: 5px;
-    padding-top: 1px;
-}
+
 
 .description{
     height:70px;
@@ -72,11 +66,11 @@ body{
 }
 
 .description_left{
-    width: 752px;
+    width: 607px;
     height: 70px;
     float:left;
 }
-.description_middle_left, .description_middle_right, .description_right, .description_right{
+.description_middle_left, .description_middle, .description_middle_right, .description_right{
     width: 115px;
     height: 70px;
     float:left;
@@ -84,26 +78,61 @@ body{
 }
 
 .content_field{
-    width: 1098px;
+    width: 1068px;
     height: 30px;
-    border-bottom: 1px dotted #56bba7
+    border-bottom: 1px dotted #56bba7;
 }
 
 .number{
-    width: 20px;
+    width: 30px;
     height: 30px;
     float: left;
 }
 
 .lineup{
-    width: 732px;
-    height: 30px;
+    width: 568px;
+    height: 23px;
     float:left;
+    padding-top: 6px;
+    padding-left: 10px;
 }
 
-.wins, .losses, .winrate{
+.wins, .losses, .winrate, .score{
     width: 115px;
     height: 30px;
     float:left;
     text-align: center;
 }
+
+/* Links */
+.lineup a.link {
+    text-decoration: none;
+    color: #272623;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 10pt;
+
+}
+
+.lineup a.link:visited {
+    color: #272623;
+}
+
+.lineup a.link:hover, a.link:active {
+    color: #68655C;
+}
+
+.footer a.link_dark{
+    text-decoration: none;
+    color: #e9ece5;
+    font-family: verdana;
+    font-size: 8pt;
+    padding-right: 10px;
+    padding-top: 1px;
+}
+
+.footer a.link_dark:visited, a.link_dark:hover,  a.link_dark:active  {
+    color: #56bba7;
+}
+
+
+
