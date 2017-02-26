@@ -7,8 +7,8 @@ create table lineups(
     lineup_key varchar(20) not null unique,
     wins integer not null default 0,
     losses integer not null default 0,
-    win_rate double not null,
-    weighted_sort double not null,
+    win_rate real not null,
+    weighted_sort real not null,
     primary key(lineup_key)
 );
 
