@@ -1,7 +1,6 @@
-set FOREIGN_KEY_CHECKS = 0;
+
 drop table if exists lineups;
 drop table if exists match_ids;
-set FOREIGN_KEY_CHECKS = 1;
 
 create table lineups(
     lineup_key varchar(20) not null unique,
