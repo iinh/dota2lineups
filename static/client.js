@@ -33,7 +33,11 @@ function fillMatches(sorting){
             res = JSON.parse(this.responseText);
             console.log(res);
             if (res.success){
-                console.log('res is: ' + res);
+                // remove loading text
+                var childDiv = document.getElementById("loading_text");
+                var parentDiv = document.getElementById("content_matches");
+                parentDiv.removeChild(childDiv);
+
                 for (var i = 0; i < matchesShown; i++){
                     contentField = document.createElement("div");
                     contentField.className = "content_field";
