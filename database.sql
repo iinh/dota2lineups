@@ -1,6 +1,5 @@
-
-drop table if exists lineups;
 drop table if exists match_ids;
+drop table if exists lineups;
 
 create table lineups(
     lineup_key varchar(20) not null unique,
