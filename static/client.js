@@ -12,7 +12,7 @@ function fillMatches(sorting){
     var losses;
     var winRate;
     var score;
-    var matchesParsed;
+    var infoText;
     var p_number;
     var p_wins;
     var p_losses;
@@ -21,8 +21,7 @@ function fillMatches(sorting){
     var a_lineup;
     var lineup_text;
     var id;
-
-    var p_matchesParsed;
+    var p_infoText;
 
     var xhttp = new XMLHttpRequest();
     var data = new FormData();
@@ -107,21 +106,19 @@ function fillMatches(sorting){
                 }
 
                     // add counter of matches parsed
-                    matchesParsed = document.createElement("div");
-                    matchesParsed.className = "lineup";
-                    p_matchesParsed = document.createElement("p");
-                    p_matchesParsed.textContent = res.matches_parsed + ' matches parsed.';
-                    p_matchesParsed.className = "small_text";
-                    matchesParsed.appendChild(p_matchesParsed);
-                    document.getElementById("content_matches").appendChild(matchesParsed);
+                    infoText = document.createElement("div");
+                    infoText.className = "info_text";
+                    p_infoText = document.createElement("p");
+                    p_infoText.style.whiteSpace = "pre";
+                    p_infoText.textContent = res.matches_parsed + ' matches parsed. \r\n';
+                    p_infoText.textContent += 'Score is calculated with the following function: score = win rate * ln(matches played). \r\n';
+                    p_infoText.textContent += 'Click on a lineup to get the match ids.';
 
-                    matchesParsed = document.createElement("div");
-                    matchesParsed.className = "lineup";
-                    p_matchesParsed = document.createElement("p");
-                    p_matchesParsed.textContent = 'Score is calculated with the following function: score = win rate * ln(matches played)';
-                    p_matchesParsed.className = "small_text";
-                    matchesParsed.appendChild(p_matchesParsed);
-                    document.getElementById("content_matches").appendChild(matchesParsed);
+                    p_infoText.className = "info_text";
+                    infoText.appendChild(p_infoText);
+                    document.getElementById("content_matches").appendChild(infoText);
+
+
                 }
                 else{
                     // Hijack the lineup field to show an error message.

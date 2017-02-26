@@ -58,6 +58,14 @@ body{
     margin: 0;
 }
 
+.info_text{
+    color: #272623;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 10pt;
+    padding-left: 0px;
+    padding-top: 6px;
+    margin: 0;
+}
 
 
 .description{
@@ -95,6 +103,14 @@ body{
     float:left;
     padding-top: 6px;
     padding-left: 10px;
+}
+
+.info_text{
+    width: 568px;
+    height: 23px;
+    float:left;
+    padding-top: 10px;
+    padding-left: 5px;
 }
 
 .wins, .losses, .winrate, .score{
