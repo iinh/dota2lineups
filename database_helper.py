@@ -31,19 +31,11 @@ def connect():
     Connect to a POSTGRES database. Config-vars in heroku env
     :return: A valid connection
     """
-    '''
     user = os.environ.get('PSQL_USER')
     password = os.environ.get('PSQL_PASSWORD')
     host = os.environ.get('PSQL_HOST')
     port = os.environ.get('PSQL_PORT')
     database = os.environ.get('PSQL_DATABASE')
-    '''
-    cfg = load_config()
-    user = cfg['database']['user']
-    password = cfg['database']['password']
-    host = cfg['database']['host']
-    port = cfg['database']['port']
-    database = cfg['database']['database']
 
     conn = psycopg2.connect(database=database,
                             user=user,
