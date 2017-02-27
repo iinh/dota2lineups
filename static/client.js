@@ -209,9 +209,9 @@ function fillMatches(sorting){
                     infoText.className = "info_text";
                     p_infoText = document.createElement("p");
                     p_infoText.style.whiteSpace = "pre";
-                    p_infoText.textContent = res.matches_parsed + ' matches parsed. \r\n';
+                    p_infoText.textContent = res.matches_parsed + ' matches parsed. \r\n \r\n';
                     p_infoText.textContent += 'Score is calculated with the following function: score = win rate * ln(matches played). \r\n';
-                    p_infoText.textContent += 'Sorting only shows matches with more than 20 wins/losses, depending on chosen sorting. \r\n';
+                    p_infoText.textContent += 'Sorting only shows matches with more than 20 wins/losses, depending on chosen sorting. \r\n\r\n';
                     p_infoText.textContent += 'Click on a lineup to get the match ids.';
 
 
