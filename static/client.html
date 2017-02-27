@@ -2,14 +2,16 @@
 <html>
 <head>
     <title> Dota 2 lineups</title>
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet"> <!-- Font-->
     <script src="client.js" type="text/javascript"></script>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <script src="https://use.fontawesome.com/74507de803.js"></script> <!-- Font awesome -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> <!-- Font-->
     <link rel="stylesheet" type="text/css" href="client.css">
 </head>
 <body>
 
 <div class="wrapper">
+
     <div class="header">
         <p class="header_text">Dota 2 lineups</p>
     </div>
@@ -17,13 +19,17 @@
     <div class="content">
         <div id="content_matches" class="content_wrapper">
             <div class="description">
-                <div class="description_left"><p class="description_text">Lineup</p></div>
-                <div class="description_middle_left"><p class="description_text">Wins</p></div>
-                <div class="description_middle"><p class="description_text">Losses</p></div>
-                <div class="description_middle_right"><p class="description_text">Win rate</p></div>
-                <div class="description_right"><p class="description_text">Score</p></div>
+                <div id="description_lineup" class="description_left"><p class="description_text">Lineup</p></div>
+                <div id="description_wins" class="description_middle_left"><p id="description_text_wins" class="description_text" onclick="fillMatches('wins')" >Wins &nbsp;</p></div>
+                <div id="description_losses" class="description_middle"><p id="description_text_losses" class="description_text" onclick="fillMatches('losses')">Losses &nbsp;</p></div>
+                <div id="description_win_rate" class="description_middle_right"><p id="description_text_win_rate" class="description_text" onclick="fillMatches('win_rate')">Win rate &nbsp;</p></div>
+                <div id="description_score" class="description_right"><p id="description_text_score" class="description_text" onclick="fillMatches('weighted_sort')">Score &nbsp; </p></div>
             </div>
-            <p id="loading_text" class="small_text">Loading matches, please wait a few seconds...</p>
+            <div id="matches_wrapper">
+
+            </div>
+
+
 
         </div>
     </div>

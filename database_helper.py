@@ -31,6 +31,7 @@ def connect():
     Connect to a POSTGRES database. Config-vars in heroku env
     :return: A valid connection
     """
+
     user = os.environ.get('PSQL_USER')
     password = os.environ.get('PSQL_PASSWORD')
     host = os.environ.get('PSQL_HOST')
@@ -211,7 +212,8 @@ def get_most_losses():
     query = 'select * from lineups ' \
             'order by(losses) desc ' \
             'limit(20)'
-    lineups_sorted = cur.execute(query)
+    cur.execute(query)
+    lineups_sorted = cur.fetchall()
     return lineups_sorted
 
 

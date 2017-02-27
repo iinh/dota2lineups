@@ -46,7 +46,10 @@ body{
     font-size: 15pt;
     padding-left: 10px;
     padding-top: 12px;
+}
 
+.description_text .fa-caret-down{
+    color: #272623;
 }
 
 .small_text{
@@ -149,6 +152,5 @@ body{
 .footer a.link_dark:visited, a.link_dark:hover,  a.link_dark:active  {
     color: #56bba7;
 }
-
 
 
