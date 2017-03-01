@@ -7,16 +7,11 @@ window.onload = function(){
 */
 function displayLoadingMessage(){
     var loadMsg;
-    var loadIcon;
     matchesWrapper = document.getElementById("matches_wrapper");
     matchesWrapper.innerHTML = "";
 
-    loadIcon = document.createElement("i");
-    loadIcon.className = "fa fa-circle-o-notch fa-spin";
-
     loadMsg = document.createElement("p");
     loadMsg.className = "small_text";
-    loadMsg.appendChild(loadIcon);
     loadMsg.id = "load_msg";
     loadMsg.textContent = "Loading matches, please wait a few seconds...";
 
