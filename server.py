@@ -1,6 +1,6 @@
+#!/usr/bin/python
 """
 This module acts as a Flask server for the project
-
 """
 
 import os
