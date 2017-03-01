@@ -22,5 +22,5 @@ create table if not exists top_lineups(
     win_rate real not null,
     weighted_sort real not null,
     primary key(lineup_key),
-    foreign key(lineup_key) references lineups(lineup_key),
+    foreign key(lineup_key) references lineups(lineup_key)
 );
