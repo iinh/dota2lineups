@@ -24,3 +24,7 @@ create table if not exists top_lineups(
     primary key(lineup_key),
     foreign key(lineup_key) references lineups(lineup_key)
 );
+
+create table if not exists info(
+    last_update timestamp without time zone default (now() at time zone 'utc')
+);
