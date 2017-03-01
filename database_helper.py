@@ -1,4 +1,8 @@
 #!/usr/bin/python
+"""
+This module is the abstraction to the database
+"""
+
 import configparser
 import psycopg2
 import math
