@@ -19,6 +19,21 @@ def index():
     return app.send_static_file('client.html')
 
 
+@app.route('/force_update', methods=['POST'])
+def force_update():
+    """
+    Force update the top lineups table in the database
+    """
+    if database_helper.update_top_tables():
+        return json.dumps({'success': True,
+                           'message': 'Top lineups has been update'
+                           })
+    else:
+        return json.dumps({'success': False,
+                           'message': 'Failed to update top lineups'
+                           })
+
+
 @app.route('/show_matches', methods=['POST'])
 def show_matches():
     """
@@ -42,12 +57,12 @@ def show_matches():
         matches = database_helper.get_most_losses()
 
     else:
-        return json.dumps({'success:': False,
-                           "message": "Match data could not be retrieved",
+        return json.dumps({'success': False,
+                           'message': 'Match data could not be retrieved',
                            })
 
-    # used for counting the number of lineups currently parsed.
-    matches_parsed = database_helper.get_matches_parsed()
+    matches_parsed = database_helper.get_matches_parsed_fast()
+    last_update = database_helper.get_last_update().strftime("%Y-%m-%d %H:%M")
     if matches:
         data = []
         for m in matches:
@@ -56,7 +71,8 @@ def show_matches():
         return json.dumps({'success': True,
                            "message": "Match data retrieved successfully",
                            "data": data,
-                           "matches_parsed": matches_parsed
+                           "matches_parsed": matches_parsed,
+                           "last_update": last_update
                            })
     else:
         return json.dumps({'success:': False,

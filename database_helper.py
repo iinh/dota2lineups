@@ -31,7 +31,6 @@ def connect():
     Connect to a POSTGRES database. Config-vars in heroku env
     :return: A valid connection
     """
-
     user = os.environ.get('PSQL_USER')
     password = os.environ.get('PSQL_PASSWORD')
     host = os.environ.get('PSQL_HOST')
@@ -61,7 +60,7 @@ def add_lineup(match_id, lineup_key, win):
     else:
         cur.execute(query_lineup, (lineup_key, 0, 1, 0, 0))
         cur.execute(query_match_id, (lineup_key, match_id, False))
-    conn.commit()
+    cur.commit()
 
 
 def add_win(match_id, lineup_key):
@@ -144,7 +143,7 @@ def get_highest_weighted_sort():
     """
     conn = connect()
     cur = conn.cursor()
-    query = 'select * from lineups ' \
+    query = 'select * from top_lineups ' \
             'order by(weighted_sort) desc ' \
             'limit(20)'
     cur.execute(query)
@@ -153,14 +152,15 @@ def get_highest_weighted_sort():
 
 
 def get_lowest_weighted_sort():
+    # TODO: Make use of top_lineups for this function.
     """
     Return bottom 20 lineups with weighted_sort (win_rate * ln(wins+losses)
     Note: Weighted_sorts with less than 5 losses are not shown.
     :return: Array of sql rows.
+    #TODO
     """
     conn = connect()
     cur = conn.cursor()
-    print('getting weighted')
     query = 'select * from lineups ' \
             'where losses > 5 ' \
             'order by(weighted_sort) desc ' \
@@ -172,14 +172,15 @@ def get_lowest_weighted_sort():
 
 def get_most_wins():
     """
-    Return top 20 lineups sorted by wins
+    Return top lineups sorted by wins
     :return: Array of sql rows.
     """
     conn = connect()
     cur = conn.cursor()
-    query = 'select * from lineups ' \
+    query = 'select * from top_lineups ' \
             'order by(wins) desc ' \
             'limit(20)'
+
     cur.execute(query)
     lineups_sorted = cur.fetchall()
     return lineups_sorted
@@ -193,8 +194,7 @@ def get_highest_win_rate():
     """
     conn = connect()
     cur = conn.cursor()
-    query = 'select * from lineups ' \
-            'where wins > 20 ' \
+    query = 'select * from top_lineups ' \
             'order by win_rate desc, wins desc ' \
             'limit(20)'
     cur.execute(query)
@@ -203,13 +203,14 @@ def get_highest_win_rate():
 
 
 def get_most_losses():
+    # TODO: Make use of top_lineups for this function.
     """
     Return top 20 lineups sorted by most losses
     :return: Array of sql rows.
     """
     conn = connect()
     cur = conn.cursor()
-    query = 'select * from lineups ' \
+    query = 'select * from top_lineups ' \
             'order by(losses) desc ' \
             'limit(20)'
     cur.execute(query)
@@ -219,14 +220,28 @@ def get_most_losses():
 
 def get_matches_parsed():
     """
-    Get number of matches parsed.
+    Get number of matches parsed. Rounded because apparently some matches were
+    not always parsed correctly. This makes matches parsed only roughly
+    accurate.
     """
     conn = connect()
     cur = conn.cursor()
     query = 'select count(*) from match_ids'
     cur.execute(query)
-    matches_parsed = cur.fetchone()[0]         # contains loss and win for each
-    matches_parsed = round(matches_parsed/2.0)                  # match, so we need to divide by 2.
+    matches_parsed = cur.fetchone()[0]          # contains loss and win for each
+    matches_parsed = round(matches_parsed/2.0)  # match, so we need to divide by 2.
+    return matches_parsed
+
+
+def get_matches_parsed_fast():
+    """
+    Get number of matches parsed from last database update
+    """
+    conn = connect()
+    cur = conn.cursor()
+    query = 'select matches_parsed from info'
+    cur.execute(query)
+    matches_parsed = cur.fetchone()[0]
     return matches_parsed
 
 
@@ -241,6 +256,19 @@ def get_matches_by_lineup(lineup_key):
     cur.execute(query, (lineup_key,))
     matches = cur.fetchall()
     return matches
+
+
+def get_last_update():
+    """
+    Get the last update timestamp from info table.
+    Should only be one
+    """
+    conn = connect()
+    cur = conn.cursor()
+    query = 'select last_update from info'
+    cur.execute(query)
+    last_update = cur.fetchone()
+    return last_update[0]
 
 
 def update_lineup_stats(lineup_key):
@@ -264,3 +292,64 @@ def update_lineup_stats(lineup_key):
             'where lineup_key = %s'
     cur.execute(query, (win_rate, weighted_sort, lineup_key))
     conn.commit()
+
+
+def update_top_tables():
+    """
+    Help function to update the top 100 of each sorting and put them in
+    top_lineups. Running this function will take some time, but will
+    significantly decrease query time when getting top lineups.
+    """
+    try:
+        conn = connect()
+        cur = conn.cursor()
+        cur.execute('delete from top_lineups')
+
+        # Wins
+        cur.execute('insert into top_lineups'
+                    '(select * from lineups '
+                    'order by wins desc '
+                    'limit(20))'
+                    'on conflict do nothing')
+        # Losses
+        cur.execute('insert into top_lineups'
+                    '(select * from lineups '
+                    'order by losses desc '
+                    'limit(20))'
+                    'on conflict do nothing')
+
+        # weighted_sort aka score
+        cur.execute('insert into top_lineups'
+                    '(select * from lineups '
+                    'order by weighted_sort desc '
+                    'limit(20))'
+                    'on conflict do nothing')
+
+        # win_rate, min 20 wins.
+        cur.execute('insert into top_lineups'
+                    '(select * from lineups '
+                    'where wins > 20'
+                    'order by win_rate desc '
+                    'limit(20))'
+                    'on conflict do nothing')
+
+        update_meta_info()
+        conn.commit()
+        return True
+
+    except Exception as e:
+        return e
+
+
+def update_meta_info():
+    """
+    Run this function to add last_update to the info database.
+    Defaults to current utc time, so only default val is needed.
+    """
+    conn = connect()
+    cur = conn.cursor()
+    matches_parsed = get_matches_parsed()
+    cur.execute('delete from info')
+    cur.execute('insert into info(last_update, matches_parsed) values(default, %s)', (matches_parsed,))
+    conn.commit()
+

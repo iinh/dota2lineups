@@ -1,9 +1,9 @@
 window.onload = function(){
-    fillMatches('weighted_sort'); // Default sorting
+    fillEverything('weighted_sort'); // Default sorting
 };
 
 /**
-    Display meesage when lineups are loading
+    Display message when lineups are loading
 */
 function displayLoadingMessage(){
     var loadMsg;
@@ -41,7 +41,8 @@ function updateSortArrow(sorting){
     for (var i = 0; i < sorting_boxes.length; i++) {
         parent = document.getElementById(sorting_boxes[i]);
         child = document.getElementById(sorting_arrows[i]);
-        if(child != null){
+        if(child != null)
+        {
             parent.removeChild(child);
          }
     }
@@ -87,13 +88,8 @@ function updateSortArrow(sorting){
     then create a new div for each lineup.
 
     If successful, lineups will be shown. If not, show error message.
-
 */
-function fillMatches(sorting){
-
-
-
-    var matchesShown = 20;
+function fillEverything(sorting){
     var contentField;
     var number;
     var lineup;
@@ -111,10 +107,10 @@ function fillMatches(sorting){
     var lineup_text;
     var id;
     var p_infoText;
+    var locked = false;
 
     updateSortArrow(sorting); // Add sorting arrow
     displayLoadingMessage();  // Remove whatever is showing and replace with loading msg
-
 
     // Overload return call from xhttp request
     var xhttp = new XMLHttpRequest();
@@ -123,6 +119,7 @@ function fillMatches(sorting){
     var url = '/show_matches';
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
+            displayLoadingMessage();
 
             // return object here
             res = JSON.parse(this.responseText);
@@ -134,112 +131,177 @@ function fillMatches(sorting){
                 parentDiv.removeChild(childDiv);
             }
 
-            // Success, fill with lineups
             if (res.success){
-                for (var i = 0; i < matchesShown; i++){
-                    contentField = document.createElement("div");
-                    contentField.className = "content_field";
-
-                    // add list index (1 to 20)
-                    var id = (i+1).toString() + '.';
-                    number = document.createElement("div");
-                    number.className = "number";
-                    p_number = document.createElement("p");
-                    p_number.textContent = id;
-                    p_number.className = "small_text";
-                    number.appendChild(p_number);
-
-                    // add lineup string
-                    lineupstring = convertLineUp(res.data[i].lineup_key);
-                    lineup = document.createElement("div");
-                    lineup.className = "lineup";
-                    a_lineup = document.createElement("a");
-                    a_lineup.className = "link";
-                    lineup_text = document.createTextNode(lineupstring);
-                    lineup_text.className = "link";
-                    a_lineup.appendChild(lineup_text);
-                    a_lineup.title = lineupstring;
-                    a_lineup.href = "/lineup/" + res.data[i].lineup_key;
-                    lineup.appendChild(a_lineup);
-
-                    // add wins string
-                    wins = document.createElement("div");
-                    wins.className = "wins";
-                    p_wins = document.createElement("p");
-                    p_wins.textContent = res.data[i].wins;
-                    p_wins.className = "small_text";
-                    wins.appendChild(p_wins);
-
-                    // add losses string
-                    losses = document.createElement("div");
-                    losses.className = "losses";
-                    p_losses = document.createElement("p");
-                    p_losses.textContent = res.data[i].losses;
-                    p_losses.className = "small_text";
-                    losses.appendChild(p_losses);
-
-                    // add winrate string
-                    winRate = document.createElement("div");
-                    winRate.className = "winrate";
-                    p_winRate = document.createElement("p");
-                    p_winRate.textContent = (res.data[i].win_rate*100).toFixed(2) + ' %'; // Get rate in percentage with 2 decimals
-                    p_winRate.className = "small_text";
-                    winRate.appendChild(p_winRate);
-
-                     // add score string
-                    score = document.createElement("div");
-                    score.className = "score";
-                    p_score = document.createElement("p");
-                    p_score.textContent = (res.data[i].weighted_sort).toFixed(2); // fix 2 decimals
-                    p_score.className = "small_text";
-                    score.appendChild(p_score);
-
-                    // put them all in a single match div
-                    contentField.appendChild(number);
-                    contentField.appendChild(lineup);
-                    contentField.appendChild(wins);
-                    contentField.appendChild(losses);
-                    contentField.appendChild(winRate);
-                    contentField.appendChild(score);
-                    document.getElementById("matches_wrapper").appendChild(contentField);
-                }
-
-                    // add counter of matches parsed
-                    infoText = document.createElement("div");
-                    infoText.className = "info_text";
-                    p_infoText = document.createElement("p");
-                    p_infoText.style.whiteSpace = "pre";
-                    p_infoText.textContent = res.matches_parsed + ' matches parsed. \r\n \r\n';
-                    p_infoText.textContent += 'Score is calculated with the following function: score = win rate * ln(matches played). \r\n';
-                    p_infoText.textContent += 'Sorting only shows matches with more than 20 wins/losses, depending on chosen sorting. \r\n\r\n';
-                    p_infoText.textContent += 'Click on a lineup to get the match ids.';
-
-
-                    p_infoText.className = "info_text";
-                    infoText.appendChild(p_infoText);
-                    document.getElementById("matches_wrapper").appendChild(infoText);
-
-
-                }
-
-                // else, hijack the lineup field to show an error message.
-                else{
-
-                    contentField = document.createElement("div");
-                    contentField.className = "content_field";
-                    lineup = document.createElement("div");
-                    lineup.className = "lineup";
-                    p_lineup = document.createElement("p");
-                    p_lineup.textContent = res.message;
-                    p_lineup.className = "small_text";
-                    lineup.appendChild(p_lineup);
-                    contentField.appendChild(lineup)
-                    document.getElementById("matches_wrapper").appendChild(contentField);
-                }
+                addMatches(res);
+                addInfo(res);
+            }else{
+                addErrorMessage(res);
+            }
+            locked = false;
         }
     };
+    if (!locked){
+        locked = true;
+        xhttp.open('POST', url, true);
+        xhttp.send(data);
+    }
+}
+
+/**
+    Adds info box of statistics and legend
+    Also adds info about updates and force update button.
+**/
+function addInfo(data){
+    // reset info box
+    document.getElementById("info_left").innerHTML = "";
+
+    // add info text
+    infoText = document.createElement("p");
+    infoText.style.whiteSpace = "pre-wrap";
+    infoText.textContent = data.matches_parsed + ' matches parsed. \r\n\r\n';
+    infoText.textContent += "Score is calculated with the following function: score = win rate * ln(matches played). \r\n";
+    infoText.textContent += "Sorting only shows matches with more than 20 wins or losses. \r\n";
+    infoText.textContent += "Click on a lineup to get the match ids.";
+    infoText.className = "info_text";
+    document.getElementById("info_left").appendChild(infoText);
+
+    // Add database update
+    updateInfo = document.createElement("p");
+    updateInfo.textContent = "Database last updated: " + data.last_update;
+    updateInfo.className = "info_text";
+
+    // add force update link
+    updateLink = document.createElement("a");
+    updateLinkText = document.createTextNode("Force update");
+    updateLink.className = "link";
+    updateLink.id = "force_update";
+    updateLink.setAttribute("onclick", "forceUpdate()");
+    updateLink.href = "javascript:void(0);";
+    updateLink.appendChild(updateLinkText);
+
+    document.getElementById("info_left").appendChild(updateInfo);
+    document.getElementById("info_left").appendChild(updateLink);
+}
+
+/**
+    Add the top 20 lineups to the html code
+*/
+function addMatches(res){
+    var matchesShown = 20
+    for (var i = 0; i < matchesShown; i++){
+        contentField = document.createElement("div");
+        contentField.className = "content_field";
+
+        // add list index (1 to 20)
+        var id = (i+1).toString() + '.';
+        number = document.createElement("div");
+        number.className = "number";
+        p_number = document.createElement("p");
+        p_number.textContent = id;
+        p_number.className = "small_text";
+        number.appendChild(p_number);
+
+        // add lineup string
+        lineupstring = convertLineUp(res.data[i].lineup_key);
+        lineup = document.createElement("div");
+        lineup.className = "lineup";
+        a_lineup = document.createElement("a");
+        a_lineup.className = "link";
+        lineup_text = document.createTextNode(lineupstring);
+        lineup_text.className = "link";
+        a_lineup.appendChild(lineup_text);
+        a_lineup.title = lineupstring;
+        a_lineup.href = "/lineup/" + res.data[i].lineup_key;
+        lineup.appendChild(a_lineup);
+
+        // add wins string
+        wins = document.createElement("div");
+        wins.className = "wins";
+        p_wins = document.createElement("p");
+        p_wins.textContent = res.data[i].wins;
+        p_wins.className = "small_text";
+        wins.appendChild(p_wins);
+
+        // add losses string
+        losses = document.createElement("div");
+        losses.className = "losses";
+        p_losses = document.createElement("p");
+        p_losses.textContent = res.data[i].losses;
+        p_losses.className = "small_text";
+        losses.appendChild(p_losses);
+
+        // add winrate string
+        winRate = document.createElement("div");
+        winRate.className = "winrate";
+        p_winRate = document.createElement("p");
+        p_winRate.textContent = (res.data[i].win_rate*100).toFixed(2) + ' %'; // Get rate in percentage with 2 decimals
+        p_winRate.className = "small_text";
+        winRate.appendChild(p_winRate);
+
+         // add score string
+        score = document.createElement("div");
+        score.className = "score";
+        p_score = document.createElement("p");
+        p_score.textContent = (res.data[i].weighted_sort).toFixed(2); // fix 2 decimals
+        p_score.className = "small_text";
+        score.appendChild(p_score);
+
+        // put them all in a single match div
+        contentField.appendChild(number);
+        contentField.appendChild(lineup);
+        contentField.appendChild(wins);
+        contentField.appendChild(losses);
+        contentField.appendChild(winRate);
+        contentField.appendChild(score);
+        document.getElementById("matches_wrapper").appendChild(contentField);
+        }
+}
+
+/**
+    Display appropriate error message.
+*/
+function addErrorMessage(res){
+    contentField = document.createElement("div");
+    contentField.className = "content_field";
+    lineup = document.createElement("div");
+    lineup.className = "lineup";
+    p_lineup = document.createElement("p");
+    p_lineup.textContent = res.message;
+    p_lineup.className = "small_text";
+    lineup.appendChild(p_lineup);
+    contentField.appendChild(lineup)
+    document.getElementById("matches_wrapper").appendChild(contentField);
+}
+
+/**
+    Force the database to update top tables for each sorting
+*/
+function forceUpdate(){
+    var link;
+    var xhttp = new XMLHttpRequest();
+    var url = '/force_update';
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            res = JSON.parse(this.responseText);
+
+            if (res.success){
+                fillEverything('weighted_sort');
+
+                // Reactivate clicking link while updating
+                link = document.getElementById("force_update");
+                link.setAttribute("onclick", "forceUpdate()");
+            }else{
+                addErrorMessage(res);
+            }
+        }
+    }
+
+    // Disable clicking link while updating
+    link = document.getElementById("force_update");
+    link.setAttribute("onclick", "");
+    displayLoadingMessage();
     xhttp.open('POST', url, true);
-    xhttp.send(data);
+    xhttp.send();
 }
 
 /**

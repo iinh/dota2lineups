@@ -26,5 +26,6 @@ create table if not exists top_lineups(
 );
 
 create table if not exists info(
-    last_update timestamp without time zone default (now() at time zone 'utc')
+    last_update timestamp without time zone default (now() at time zone 'utc'),
+    matches_parsed bigint
 );
